@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id
+  email        String        @unique
+  name         String        @unique
+  passwordHash String
+  comments     Comment[]
+  commentVote  CommentVote[]
+  posts        Post[]
+  postVotes    PostVote[]
+  sessions     Session[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id             Int        @id @default(autoincrement())
+  title          String
+  content        String
+  userId         String
+  voteCount      Int        @default(0)
+  commentCount   Int        @default(0)
+  maxThreadDepth Int        @default(0)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  comments       Comment[]
+  user           User       @relation(fields: [userId], references: [id])
+  postVotes      PostVote[]
+}
+
+model PostVote {
+  postId    Int
+  userId    String
+  vote      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id(name: "postVoteId", [postId, userId])
+}
+
+model Comment {
+  id            Int           @id @default(autoincrement())
+  content       String
+  postId        Int
+  parentId      Int?
+  childrenCount Int           @default(0)
+  userId        String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  voteCount     Int           @default(0)
+  parent        Comment?      @relation("CommentToComment", fields: [parentId], references: [id])
+  children      Comment[]     @relation("CommentToComment")
+  post          Post          @relation(fields: [postId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  commentVotes  CommentVote[]
+}
+
+model CommentVote {
+  commentId Int
+  userId    String
+  vote      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id(name: "commentVoteId", [commentId, userId])
+}

@@ -1,0 +1,29 @@
+{
+  "name": "aha-news",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@prisma/client": "^5.12.0",
+    "astro": "^4.5.9",
+    "lucia": "^3.1.1",
+    "oslo": "^1.2.0",
+    "typescript": "^5.4.3"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@types/node": "^20.12.3",
+    "prisma": "^5.12.0",
+    "tsx": "^4.7.1"
+  }
+}
