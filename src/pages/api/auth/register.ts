@@ -1,6 +1,3 @@
-import { lucia } from "../../../auth";
-import { generateId } from "lucia";
-import { Argon2id } from "oslo/password";
 import { z } from "astro:content";
 import { createUser } from "../../../contexts/User";
 import { capitalizeFirstLetter } from "../../../helpers";
@@ -29,6 +26,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     await createUser(formObject);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/signin",
+      },
+    });
   } catch (err) {
     switch (err.code) {
       case "P2002":
