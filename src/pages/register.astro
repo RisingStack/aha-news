@@ -8,6 +8,11 @@ import Layout from "../layouts/Layout.astro";
   <form
     id="register-form"
     class="form-control"
+    hx-post="/api/auth/register"
+    hx-trigger="my-submit"
+    hx-swap="none"
+    hx-ext="disable-element"
+    hx-disable-element="submit-button"
     x-data="{pristine: undefined, showError: true}"
     x-init="$nextTick(() => { pristine = new Pristine($el) });"
     x-on:submit.prevent="showError = true; submitRegistration($el, pristine)"
@@ -51,6 +56,7 @@ import Layout from "../layouts/Layout.astro";
   </form>
 </Layout>
 <script>
+  import htmx from "htmx.org";
   import type { Pristine } from "pristinejs";
   declare global {
     interface Window {
@@ -60,7 +66,7 @@ import Layout from "../layouts/Layout.astro";
 
   window.submitRegistration = function (form, pristine) {
     if (pristine.validate()) {
-      form.submit();
+      htmx.trigger(form, "my-submit", null);
     }
   };
 </script>

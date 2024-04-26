@@ -1,7 +1,11 @@
+---
+import FlashAlert from "../../../components/FlashAlert.astro";
 import { z } from "astro:content";
 import { createUser } from "../../../contexts/User";
 import { capitalizeFirstLetter } from "../../../helpers";
-import type { APIRoute } from "astro";
+
+export const partial = true;
+let formObject, error;
 
 const formObjectSchema = z.object({
   email: z.string().email(),
@@ -9,9 +13,8 @@ const formObjectSchema = z.object({
   password: z.string().min(6),
 });
 
-export const POST: APIRoute = async ({ request }) => {
-  const formData = await request.formData();
-  let formObject;
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
   try {
     formObject = formObjectSchema.parse({
       email: formData.get("email"),
@@ -27,23 +30,22 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     await createUser(formObject);
     return new Response(null, {
-      status: 302,
+      status: 200,
       headers: {
-        Location: "/signin",
+        "HX-Redirect": "/signin",
       },
     });
   } catch (err) {
     switch (err.code) {
       case "P2002":
         const targets = err.meta.target.map(capitalizeFirstLetter).join(", ");
-
-        return new Response(`${targets} already exist`, {
-          status: 409,
-        });
+        error = `${targets} already exists`;
+        break;
       default:
-        return new Response(null, {
-          status: 500,
-        });
+        error = "An error occurred";
     }
   }
-};
+}
+---
+
+<FlashAlert message={error} shown hxSwapOob />

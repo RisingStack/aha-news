@@ -1,4 +1,5 @@
 ---
+import FlashAlert from "../components/FlashAlert.astro";
 interface Props {
   title: string;
   loadAlpine?: boolean;
@@ -21,8 +22,14 @@ const { title, loadAlpine, loadPristine, loadHtmx } = Astro.props;
     {loadAlpine ? <script src="/alpine.js" defer /> : null}
     {loadHtmx ? <script src="/htmx.js" crossorigin="anonymous" /> : null}
     <title>{title}</title>
+    <style is:global>
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
+    <FlashAlert />
     <slot />
   </body>
 </html>
