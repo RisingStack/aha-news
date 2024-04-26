@@ -20,8 +20,14 @@ const { user } = Astro.locals;
 const currentUserVote = post.currentUserVote?.vote;
 ---
 
-<tr>
-  <td> </td>
+<tr
+  x-data={`{isShown: true, i: ${i + 1}}`}
+  x-show="isShown"
+  x-on:decrement.window="i = i - 1"
+>
+  <td x-show="i" x-html="i + '.'">
+    {i + 1}.
+  </td>
   <td class="pl-1">
     <a href={`/posts/${post.id}`}><div class="size">{post.title}</div></a>
     <div class="text-xs">
@@ -30,7 +36,9 @@ const currentUserVote = post.currentUserVote?.vote;
       <a href={`/posts/${post.id}`}>
         {post.commentCount > 0 ? `${post.commentCount} comments` : "discuss"}
       </a>
-      <a href="#"> hide </a>
+      <a href="#" x-on.prevent:click="isShown = false; $dispatch('decrement')">
+        hide
+      </a>
     </div>
   </td>
 </tr>
