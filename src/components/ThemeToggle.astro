@@ -81,7 +81,6 @@ const isDark = theme === "dark";
       window
         .matchMedia("(prefers-color-scheme: dark)")
         .addEventListener("change", (e) => {
-          console.log("theme change", e);
           if (e.matches) {
             this.isDark = true;
             html.setAttribute("data-theme", "dark");
