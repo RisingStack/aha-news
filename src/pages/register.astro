@@ -2,12 +2,15 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Register">
+<Layout title="Register" loadPristine>
   <h1 class="text-xl font-semibold mb-3">Register</h1>
   <p>Already have an account? <a href="/signin" class="link">Sign in</a></p>
   <form
     id="register-form"
     class="form-control"
+    x-data="{pristine: undefined, showError: true}"
+    x-init="$nextTick(() => { pristine = new Pristine($el) });"
+    x-on:submit.prevent="showError = true; submitRegistration($el, pristine)"
     action="/api/auth/register"
     method="POST"
   >
@@ -47,3 +50,17 @@ import Layout from "../layouts/Layout.astro";
     </div>
   </form>
 </Layout>
+<script>
+  import type { Pristine } from "pristinejs";
+  declare global {
+    interface Window {
+      submitRegistration: (form: HTMLFormElement, pristine: Pristine) => void;
+    }
+  }
+
+  window.submitRegistration = function (form, pristine) {
+    if (pristine.validate()) {
+      form.submit();
+    }
+  };
+</script>

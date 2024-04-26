@@ -1,9 +1,12 @@
 ---
 interface Props {
   title: string;
+  loadAlpine?: boolean;
+  loadPristine?: boolean;
+  loadHtmx?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, loadAlpine, loadPristine, loadHtmx } = Astro.props;
 ---
 
 <!doctype html>
@@ -14,6 +17,9 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+    {loadPristine ? <script src="/pristine.js" /> : null}
+    {loadAlpine ? <script src="/alpine.js" defer /> : null}
+    {loadHtmx ? <script src="/htmx.js" crossorigin="anonymous" /> : null}
     <title>{title}</title>
   </head>
   <body>
