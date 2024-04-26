@@ -1,5 +1,6 @@
 ---
 import FlashAlert from "../components/FlashAlert.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 interface Props {
   title: string;
   loadAlpine?: boolean;
@@ -8,10 +9,12 @@ interface Props {
 }
 
 const { title, loadAlpine, loadPristine, loadHtmx } = Astro.props;
+const cookieObject = Astro.cookies.get("theme");
+const theme = cookieObject?.value;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme={theme}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
@@ -30,7 +33,12 @@ const { title, loadAlpine, loadPristine, loadHtmx } = Astro.props;
   </head>
   <body>
     <FlashAlert />
-    <slot />
+    <div class="flex flex-row between">
+      <div>
+        <slot />
+      </div>
+      <ThemeToggle />
+    </div>
   </body>
 </html>
 <style is:global>

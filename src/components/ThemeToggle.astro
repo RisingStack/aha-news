@@ -1,0 +1,109 @@
+---
+const { value: theme } = Astro.cookies.get("theme");
+const isDark = theme === "dark";
+---
+
+<div class="sticky top-0 w-max ml-auto" x-data="theme" x-bind="effect">
+  <div class="flex">
+    <label for="theme-toggle">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+        ></path>
+      </svg>
+    </label>
+    <input
+      id="theme-toggle"
+      type="checkbox"
+      class="toggle"
+      x-model="isDark"
+      checked={isDark}
+    />
+    <label for="theme-toggle">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </label>
+  </div>
+</div>
+
+<script>
+  import Alpine, { offloadData, loadComponents } from "../alpine";
+
+  declare global {
+    interface Window {
+      Alpine: typeof Alpine;
+    }
+  }
+
+  window.Alpine = Alpine;
+
+  const hasMatchMedia = window.matchMedia;
+  const cookieTheme = document.cookie
+    .split(";")
+    .find((c) => c.trim().startsWith("theme="));
+
+  let prefersDarkTheme;
+
+  if (cookieTheme) {
+    prefersDarkTheme = cookieTheme.split("=")[1] === "dark";
+  } else {
+    prefersDarkTheme =
+      hasMatchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  document.cookie = `theme=${prefersDarkTheme ? "dark" : "light"};path=/`;
+
+  const html = document.querySelector("html");
+  html.setAttribute("data-theme", prefersDarkTheme ? "dark" : "light");
+
+  offloadData({
+    name: "theme",
+    data: {
+      isDark: prefersDarkTheme,
+      init() {
+        window
+          .matchMedia("(prefers-color-scheme: dark)")
+          .addEventListener("change", (e) => {
+            console.log("theme change", e);
+            if (e.matches) {
+              this.isDark = true;
+              html.setAttribute("data-theme", "dark");
+            } else {
+              this.isDark = false;
+              html.setAttribute("data-theme", "light");
+            }
+          });
+
+        document.querySelector("#theme-toggle").removeAttribute("checked");
+      },
+
+      effect: {
+        ["x-effect"]() {
+          html.setAttribute("data-theme", this.isDark ? "dark" : "light");
+          document.cookie = `theme=${this.isDark ? "dark" : "light"};path=/`;
+        },
+      },
+    },
+  });
+
+  loadComponents();
+</script>
