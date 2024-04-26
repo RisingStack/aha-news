@@ -45,7 +45,7 @@ const isDark = theme === "dark";
 </div>
 
 <script>
-  import Alpine, { offloadData, loadComponents } from "../alpine";
+  import Alpine from "alpinejs";
 
   declare global {
     interface Window {
@@ -75,35 +75,32 @@ const isDark = theme === "dark";
   const html = document.querySelector("html");
   html.setAttribute("data-theme", prefersDarkTheme ? "dark" : "light");
 
-  offloadData({
-    name: "theme",
-    data: {
-      isDark: prefersDarkTheme,
-      init() {
-        window
-          .matchMedia("(prefers-color-scheme: dark)")
-          .addEventListener("change", (e) => {
-            console.log("theme change", e);
-            if (e.matches) {
-              this.isDark = true;
-              html.setAttribute("data-theme", "dark");
-            } else {
-              this.isDark = false;
-              html.setAttribute("data-theme", "light");
-            }
-          });
+  Alpine.data("theme", () => ({
+    isDark: prefersDarkTheme,
+    init() {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", (e) => {
+          console.log("theme change", e);
+          if (e.matches) {
+            this.isDark = true;
+            html.setAttribute("data-theme", "dark");
+          } else {
+            this.isDark = false;
+            html.setAttribute("data-theme", "light");
+          }
+        });
 
-        document.querySelector("#theme-toggle").removeAttribute("checked");
-      },
+      document.querySelector("#theme-toggle").removeAttribute("checked");
+    },
 
-      effect: {
-        ["x-effect"]() {
-          html.setAttribute("data-theme", this.isDark ? "dark" : "light");
-          document.cookie = `theme=${this.isDark ? "dark" : "light"};path=/`;
-        },
+    effect: {
+      ["x-effect"]() {
+        html.setAttribute("data-theme", this.isDark ? "dark" : "light");
+        document.cookie = `theme=${this.isDark ? "dark" : "light"};path=/`;
       },
     },
-  });
+  }));
 
-  loadComponents();
+  Alpine.start();
 </script>
