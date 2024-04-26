@@ -55,19 +55,18 @@ const serverIsDark = theme === "dark";
 
   window.Alpine = Alpine;
 
-  const hasMatchMedia = window.matchMedia;
   const cookieTheme = document.cookie
     .split(";")
     .find((c) => c.trim().startsWith("theme="));
 
-  let prefersDarkTheme;
+  let prefersDarkTheme = true; // default to dark theme
 
   if (cookieTheme) {
     prefersDarkTheme = cookieTheme.split("=")[1] === "dark";
-  } else {
-    prefersDarkTheme =
-      hasMatchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
+  } else if (window.matchMedia) {
+    prefersDarkTheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
   }
 
   document.cookie = `theme=${prefersDarkTheme ? "dark" : "light"};path=/`;
@@ -83,10 +82,8 @@ const serverIsDark = theme === "dark";
         .addEventListener("change", (e) => {
           if (e.matches) {
             this.isDark = true;
-            html.setAttribute("data-theme", "dark");
           } else {
             this.isDark = false;
-            html.setAttribute("data-theme", "light");
           }
         });
 
