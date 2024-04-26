@@ -26,12 +26,22 @@ const canVoteDown = noCurrentUserVote || currentUserVoteUp;
   {
     user ? (
       <>
-        <a class="cursor-pointer">
+        <a
+          hx-post={canVoteUp ? path.join(url, "/up") : null}
+          hx-target={`#vote-arrows-${entityId}`}
+          hx-swap="outerHTML"
+          class="cursor-pointer"
+        >
           <span class:list={[{ "text-rs-mid-green": currentUserVoteUp }]}>
             ▲
           </span>
         </a>
-        <a class="cursor-pointer">
+        <a
+          hx-post={canVoteDown ? path.join(url, "/down") : null}
+          hx-target={`#vote-arrows-${entityId}`}
+          hx-swap="outerHTML"
+          class="cursor-pointer"
+        >
           <span class:list={[{ "text-rs-mid-green": currentUserVoteDown }]}>
             ▼
           </span>

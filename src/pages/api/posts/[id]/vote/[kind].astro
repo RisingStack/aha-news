@@ -1,0 +1,22 @@
+---
+import VoteArrows from "../../../../../components/VoteArrows.astro";
+import { upsertPostVote } from "../../../../../contexts/Post";
+
+const { id, kind } = Astro.params;
+const postId = parseInt(id);
+const vote = kind === "up";
+
+const updatedPost = await upsertPostVote(vote, postId, Astro.locals.user);
+
+export const partial = true;
+---
+
+<VoteArrows
+  entityId={postId}
+  url={`/api/posts/${postId}/vote/`}
+  currentUserVote={vote}
+  user={Astro.locals.user}
+/>
+<span hx-swap-oob="true" id={`post-vote-count-${updatedPost.id}`}>
+  {updatedPost.voteCount}
+</span>

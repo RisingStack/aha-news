@@ -28,6 +28,23 @@ const currentUserVote = post.currentUserVote?.vote;
   <td x-show="i" x-html="i + '.'">
     {i + 1}.
   </td>
+  <td>
+    {
+      user && (
+        <div
+          id={`vote-arrows-${post.id}`}
+          class="flex flex-col text-xs leading-none"
+        >
+          <VoteArrows
+            url={`/api/posts/${post.id}/vote/`}
+            entityId={post.id}
+            currentUserVote={currentUserVote}
+            user={user}
+          />
+        </div>
+      )
+    }
+  </td>
   <td class="pl-1">
     <a href={`/posts/${post.id}`}><div class="size">{post.title}</div></a>
     <div class="text-xs">
