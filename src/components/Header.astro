@@ -1,0 +1,48 @@
+---
+import type { User } from "lucia";
+
+interface Props {
+  user: User;
+}
+
+const user = Astro.props.user;
+const username = user ? user.name : null;
+---
+
+<div class="flex justify-around">
+  <div
+    class="flex justify-between w-full mb-2 p-1 bg-rs-mid-green dark:text-black"
+  >
+    <div class="flex me-3 items-center">
+      <img
+        src="/rs-small.png"
+        class="h-[18px] w-[18px] me-1"
+        height="18"
+        width="18"
+      />
+      <div>
+        <a class="font-bold" href="/">AHA News</a> |
+        <a href="/posts/new">submit</a>
+      </div>
+    </div>
+    {
+      user ? (
+        <div class="header-left">
+          <a class="header-link" href="#">
+            {username}
+          </a>
+          |
+          <a class="header-link" href="/api/auth/signout">
+            logout
+          </a>
+        </div>
+      ) : (
+        <div class="header-left">
+          <a class="header-link" href="/signin">
+            login
+          </a>
+        </div>
+      )
+    }
+  </div>
+</div>

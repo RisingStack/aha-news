@@ -1,0 +1,36 @@
+---
+import type { Post, PostVote } from "@prisma/client";
+import type { User } from "lucia";
+import VoteArrows from "../components/VoteArrows.astro";
+
+interface PostWithUser extends Post {
+  user: User;
+  postVotes: PostVote[];
+  currentUserVote: PostVote | null;
+}
+
+interface Props {
+  i?: number;
+  post: PostWithUser;
+  onPostPage?: boolean;
+}
+
+const { i, post, onPostPage } = Astro.props;
+const { user } = Astro.locals;
+const currentUserVote = post.currentUserVote?.vote;
+---
+
+<tr>
+  <td> </td>
+  <td class="pl-1">
+    <a href={`/posts/${post.id}`}><div class="size">{post.title}</div></a>
+    <div class="text-xs">
+      <span id={`post-vote-count-${post.id}`}>{post.voteCount}</span> points by
+      <a href="#">{post.user.name}</a> |
+      <a href={`/posts/${post.id}`}>
+        {post.commentCount > 0 ? `${post.commentCount} comments` : "discuss"}
+      </a>
+      <a href="#"> hide </a>
+    </div>
+  </td>
+</tr>

@@ -1,0 +1,42 @@
+---
+import type { User } from "lucia";
+import path from "path";
+
+interface Props {
+  currentUserVote: boolean;
+  url: string;
+  entityId: number;
+  user: User;
+}
+
+const { currentUserVote, url, entityId, user } = Astro.props;
+const currentUserVoteUp = currentUserVote === true;
+const currentUserVoteDown = currentUserVote === false;
+const noCurrentUserVote =
+  currentUserVote === undefined || currentUserVote === null;
+
+const canVoteUp = noCurrentUserVote || currentUserVoteDown;
+const canVoteDown = noCurrentUserVote || currentUserVoteUp;
+---
+
+<div
+  id={`vote-arrows-${entityId}`}
+  class="flex flex-col text-xs leading-none pr-1"
+>
+  {
+    user ? (
+      <>
+        <a class="cursor-pointer">
+          <span class:list={[{ "text-rs-mid-green": currentUserVoteUp }]}>
+            ▲
+          </span>
+        </a>
+        <a class="cursor-pointer">
+          <span class:list={[{ "text-rs-mid-green": currentUserVoteDown }]}>
+            ▼
+          </span>
+        </a>
+      </>
+    ) : null
+  }
+</div>

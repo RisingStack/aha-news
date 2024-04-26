@@ -1,5 +1,6 @@
 ---
 import FlashAlert from "../components/FlashAlert.astro";
+import Header from "../components/Header.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 interface Props {
   title: string;
@@ -33,11 +34,16 @@ const theme = cookieObject?.value;
   </head>
   <body>
     <FlashAlert />
-    <div class="flex flex-row between">
-      <div>
-        <slot />
+    <div class="flex justify-center">
+      <div class="w-[1276px]">
+        <Header user={Astro.locals.user} />
+        <div class="flex flex-row between">
+          <div>
+            <slot />
+          </div>
+          <ThemeToggle />
+        </div>
       </div>
-      <ThemeToggle />
     </div>
   </body>
 </html>
