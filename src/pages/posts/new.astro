@@ -1,4 +1,5 @@
 ---
+import SubmitButton from "../../components/SubmitButton.astro";
 import Layout from "../../layouts/Layout.astro";
 
 if (!Astro.locals.user) {
@@ -46,9 +47,7 @@ if (!Astro.locals.user) {
         required></textarea>
     </div>
     <div class="mt-5">
-      <button type="submit" class="btn btn-neutral" id="submit-post">
-        Submit
-      </button>
+      <SubmitButton id="submit-post">Submit</SubmitButton>
     </div>
   </form>
 </Layout>

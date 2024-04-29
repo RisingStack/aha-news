@@ -1,0 +1,27 @@
+---
+interface Props {
+  id: string;
+  classList?: string;
+}
+
+const { id, classList } = Astro.props;
+---
+
+<button type="submit" class:list={["btn btn-neutral", classList]} id={id}>
+  <span class="htmx-hide">
+    <slot />
+  </span>
+  <span class="htmx-indicator loading loading-dots loading-sm">.</span>
+</button>
+
+<style is:global>
+  .htmx-indicator {
+    display: none;
+  }
+  .htmx-request .htmx-indicator {
+    display: inline;
+  }
+  .htmx-request.htmx-indicator {
+    display: inline;
+  }
+</style>
