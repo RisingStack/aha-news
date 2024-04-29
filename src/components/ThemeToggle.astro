@@ -1,5 +1,5 @@
 ---
-const { value: theme } = Astro.cookies.get("theme");
+const { value: theme } = Astro.cookies.get("theme") || { value: "dark" };
 const serverIsDark = theme === "dark";
 ---
 
