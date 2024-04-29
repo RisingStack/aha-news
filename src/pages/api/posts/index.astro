@@ -1,0 +1,36 @@
+---
+import FlashAlert from "../../../components/FlashAlert.astro";
+import { createPost } from "../../../contexts/Post";
+
+export const partial = true;
+
+let error;
+
+if (Astro.request.method === "POST") {
+  const { user } = Astro.locals;
+
+  if (!user) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const formData = await Astro.request.formData();
+
+  const title = formData.get("title") as string;
+  const content = formData.get("content") as string;
+
+  try {
+    await createPost(title, content, user);
+    return new Response("Success", {
+      status: 200,
+      headers: {
+        "HX-Redirect": "/",
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    error = err.message;
+  }
+}
+---
+
+<FlashAlert message={error} shown hxSwapOob />
