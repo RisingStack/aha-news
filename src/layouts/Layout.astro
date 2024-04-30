@@ -1,7 +1,6 @@
 ---
 import FlashAlert from "../components/FlashAlert.astro";
 import Header from "../components/Header.astro";
-import LoadingBar from "../components/LoadingBar.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 interface Props {
   title: string;
@@ -33,8 +32,7 @@ const theme = cookieObject?.value;
       }
     </style>
   </head>
-  <body hx-indicator="#loading-bar">
-    <LoadingBar id="loading-bar" />
+  <body>
     <FlashAlert />
     <div class="flex justify-center">
       <div class="w-[1276px]">

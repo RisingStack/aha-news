@@ -1,6 +1,7 @@
 ---
 import type { User } from "lucia";
 import path from "path";
+import LoadingBar from "./LoadingBar.astro";
 
 interface Props {
   currentUserVote: boolean;
@@ -23,6 +24,7 @@ const canVoteDown = noCurrentUserVote || currentUserVoteUp;
   id={`vote-arrows-${entityId}`}
   class="flex flex-col text-xs leading-none pr-1"
 >
+  <LoadingBar id="loading-bar" />
   {
     user ? (
       <>
@@ -30,6 +32,7 @@ const canVoteDown = noCurrentUserVote || currentUserVoteUp;
           hx-post={canVoteUp ? path.join(url, "/up") : null}
           hx-target={`#vote-arrows-${entityId}`}
           hx-swap="outerHTML"
+          hx-indicator="#loading-bar"
           class="cursor-pointer"
         >
           <span class:list={[{ "text-rs-mid-green": currentUserVoteUp }]}>
@@ -40,6 +43,7 @@ const canVoteDown = noCurrentUserVote || currentUserVoteUp;
           hx-post={canVoteDown ? path.join(url, "/down") : null}
           hx-target={`#vote-arrows-${entityId}`}
           hx-swap="outerHTML"
+          hx-indicator="#loading-bar"
           class="cursor-pointer"
         >
           <span class:list={[{ "text-rs-mid-green": currentUserVoteDown }]}>
