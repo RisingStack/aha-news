@@ -1,0 +1,18 @@
+---
+interface Props {
+  targetId: number;
+}
+
+const { targetId } = Astro.props;
+---
+
+{
+  targetId ? (
+    <span>
+      <a class="link" href={`#comment-${targetId}`}>
+        <slot />
+      </a>
+      |
+    </span>
+  ) : null
+}

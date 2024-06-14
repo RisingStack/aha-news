@@ -1,0 +1,39 @@
+---
+import SubmitButton from "./SubmitButton.astro";
+interface Props {
+  postId: number;
+  parentCommentId: number;
+}
+
+const { postId, parentCommentId } = Astro.props;
+---
+
+<div x-data="{isFormShown: false}">
+  <span
+    x-show="!isFormShown"
+    x-on:click="isFormShown = true"
+    class="text-xs link">reply</span
+  >
+  <div x-show="isFormShown" x-cloak>
+    <form class="inline-block" >
+      <div>
+        <textarea
+          name="content"
+          cols="80"
+          class="textarea textarea-bordered my-3"
+          required></textarea>
+      </div>
+      <div class="flex justify-between">
+        <SubmitButton id={`submit-comment-${parentCommentId}`}
+          >add comment</SubmitButton
+        >
+        <button
+          class="btn btn-neutral"
+          type="button"
+          @click="isFormShown = false"
+          >cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

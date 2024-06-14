@@ -1,0 +1,55 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PostListElement from "../../components/PostListElement.astro";
+import {
+  getPostWithComments,
+  type PostWithComments,
+} from "../../contexts/Post";
+import SubmitButton from "../../components/SubmitButton.astro";
+import CommentList from "../../components/CommentList.astro";
+
+const { id } = Astro.params;
+const postId = parseInt(id);
+
+const { user } = Astro.locals;
+
+const post: PostWithComments = await getPostWithComments(postId);
+
+post.currentUserVote =
+  post.postVotes.find((vote) => vote.userId === user?.id) || null;
+---
+
+<Layout title={`AHA News - ${post.title}`} loadHtmx>
+  <table class="border-separate border-spacing-y-3">
+    <tbody>
+      <PostListElement post={post} onPostPage />
+      <tr>
+        <td></td>
+        <td>{post.content}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div>
+    <form class="mb-3">
+      <textarea
+        class="block textarea textarea-bordered"
+        rows="8"
+        cols="80"
+        name="content"
+        required></textarea>
+      <div class="mt-3">
+        <SubmitButton id="submit-comment">add comment</SubmitButton>
+      </div>
+    </form>
+    <div id="comments" class="mt-3">
+      <CommentList
+        comments={post.comments}
+        depth={0}
+        postId={post.id}
+        hiddenCommentIds={[]}
+      />
+    </div>
+    <div id="comments" class="mt-3"></div>
+  </div>
+</Layout>

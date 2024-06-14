@@ -15,7 +15,7 @@ interface Props {
   onPostPage?: boolean;
 }
 
-const { i, post, onPostPage } = Astro.props;
+const { i, post } = Astro.props;
 const { user } = Astro.locals;
 const currentUserVote = post.currentUserVote?.vote;
 ---

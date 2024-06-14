@@ -1,0 +1,95 @@
+---
+import CommentList from "./CommentList.astro";
+import VoteArrows from "./VoteArrows.astro";
+import MaybeCommentLink from "./MaybeCommentLink.astro";
+import CommentReply from "./CommentReply.astro";
+import type { Comment, CommentVote } from "@prisma/client";
+import type { User } from "lucia";
+
+export interface CommentWithComments extends Comment {
+  children: CommentWithComments[];
+  commentVotes: CommentVote[];
+  user: User;
+}
+
+interface Props {
+  postId: number;
+  comment: CommentWithComments;
+  depth: number;
+  hiddenCommentIds: number[];
+  newId: number;
+  nextCommentId?: number;
+  prevCommentId?: number;
+  parentCommentId?: number;
+  rootCommentId?: number;
+}
+
+const {
+  postId,
+  comment,
+  newId,
+  hiddenCommentIds,
+  prevCommentId,
+  nextCommentId,
+  parentCommentId,
+  depth,
+} = Astro.props;
+const { user } = Astro.locals;
+
+const commentVote = comment.commentVotes?.find(
+  (commentVote) => commentVote.userId === user?.id
+);
+const currentUserVote = commentVote?.vote;
+
+function getDateString(date: Date) {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+
+  return date.toLocaleDateString("en-US", options);
+}
+---
+
+<div id={`comment-${comment.id}`}>
+  <table>
+    <tbody>
+      <td>
+        <span>
+          <VoteArrows
+            url={`/api/comments/${comment.id}/vote/`}
+            entityId={comment.id}
+            currentUserVote={currentUserVote}
+            user={user}
+          />
+        </span>
+      </td>
+      <td class="text-xs">
+        <span id={`comment-vote-count-${comment.id}`}>{comment.voteCount}</span>
+        {comment.user?.name}
+        {getDateString(comment.createdAt)}
+        |
+        <MaybeCommentLink targetId={parentCommentId}>parent</MaybeCommentLink>
+        <MaybeCommentLink targetId={prevCommentId}>prev</MaybeCommentLink>
+        <MaybeCommentLink targetId={nextCommentId}>next</MaybeCommentLink>
+      </td>
+    </tbody>
+  </table>
+  <div x-show="isShown">
+    <div>{comment.content}</div>
+    <CommentReply postId={postId} parentCommentId={comment.id} />
+    <div class="pl-3 mt-3">
+      <CommentList
+        postId={postId}
+        comments={comment.children as CommentWithComments[]}
+        depth={depth + 1}
+        parentCommentId={comment.id}
+        newId={newId}
+        hiddenCommentIds={hiddenCommentIds}
+      />
+    </div>
+  </div>
+</div>
