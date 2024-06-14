@@ -7,6 +7,7 @@ import {
 } from "../../contexts/Post";
 import SubmitButton from "../../components/SubmitButton.astro";
 import CommentList from "../../components/CommentList.astro";
+import HiddenCommentStore from "../../components/HiddenCommentStore.astro";
 
 const { id } = Astro.params;
 const postId = parseInt(id);
@@ -31,9 +32,19 @@ post.currentUserVote =
   </table>
 
   <div
+    x-data="{commentIds: [], hiddenCommentIds: []}"
+    x-on:comment-added="commentIds.push($event.detail.id)"
     x-on:comment-show="hiddenCommentIds = hiddenCommentIds.filter((id) => id !== $event.detail.id)"
+    x-on:comment-hide="hiddenCommentIds.push($event.detail.id)"
   >
-    <form class="mb-3">
+    <form
+      class="mb-3"
+      hx-post="/api/comments"
+      hx-target="#comments"
+      hx-vals={`{"postId": ${post.id}, "parentId": null}`}
+      hx-disabled-elt="#submit-comment"
+    >
+      <HiddenCommentStore />
       <textarea
         class="block textarea textarea-bordered"
         rows="8"

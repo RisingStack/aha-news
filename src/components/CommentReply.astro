@@ -1,4 +1,5 @@
 ---
+import HiddenCommentStore from "./HiddenCommentStore.astro";
 import SubmitButton from "./SubmitButton.astro";
 interface Props {
   postId: number;
@@ -15,7 +16,15 @@ const { postId, parentCommentId } = Astro.props;
     class="text-xs link">reply</span
   >
   <div x-show="isFormShown" x-cloak>
-    <form class="inline-block" >
+    <form
+      class="inline-block"
+      hx-post="/api/comments"
+      hx-target="#comments"
+      hx-vals={`{"postId": ${postId}, "parentId": ${parentCommentId}}`}
+      hx-ext="disable-element"
+      hx-disable-element={`#submit-comment-${parentCommentId}`}
+    >
+      <HiddenCommentStore />
       <div>
         <textarea
           name="content"

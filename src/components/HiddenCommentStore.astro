@@ -1,0 +1,11 @@
+<div class="hidden">
+  <template x-for="commentId in commentIds">
+    <input
+      type="checkbox"
+      name="hiddenCommentIds"
+      :id="`check-${commentId}`"
+      :value="commentId"
+      x-model="hiddenCommentIds"
+    />
+  </template>
+</div>

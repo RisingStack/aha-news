@@ -65,11 +65,22 @@ function getChildCommentCount(comment: CommentWithComments) {
 
 const recursiveChildCount = getChildCommentCount(comment);
 const isShown = !hiddenCommentIds?.includes(comment.id);
+const isNew = newId === comment.id;
 ---
 
 <div
   id={`comment-${comment.id}`}
-  x-data={`{isShown: ${isShown}, recursiveChildCount: ${recursiveChildCount}}`}
+  x-data={`{isShown: ${isShown}, recursiveChildCount: ${recursiveChildCount}, isNew: ${isNew}}`}
+  x-bind:class="{'animate-pulse': isNew}"
+  x-init={`
+      () => {
+        $dispatch('comment-added', { id: ${comment.id} });
+        if (${isNew}) {
+          $el.scrollIntoView();
+          setTimeout(() => isNew = false, 5000) 
+        }
+      };
+    `}
 >
   <table>
     <tbody>

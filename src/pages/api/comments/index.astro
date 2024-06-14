@@ -1,0 +1,41 @@
+---
+import { type CommentWithComments } from "../../../components/Comment.astro";
+import CommentList from "../../../components/CommentList.astro";
+import FlashAlert from "../../../components/FlashAlert.astro";
+import { createComment } from "../../../contexts/Comment";
+
+let post, comment, hiddenCommentIds, error;
+
+if (Astro.request.method === "POST") {
+  const { user } = Astro.locals;
+
+  if (!user) {
+    return new Response("Log in first", {
+      status: 401,
+      headers: { "HX-Redirect": "/signin" },
+    });
+  }
+
+  const formData = await Astro.request.formData();
+  const content = formData.get("content") as string;
+  hiddenCommentIds = formData.getAll("hiddenCommentIds").map(Number);
+  const parentId = parseInt(formData.get("parentId") as string);
+  const postId = parseInt(formData.get("postId") as string);
+
+  try {
+    [comment, post] = await createComment(user, content, parentId, postId);
+  } catch (err) {
+    error = err.message;
+    console.error(err);
+  }
+}
+---
+
+{error && <FlashAlert message={error} shown hxSwapOob />}
+<CommentList
+  postId={post.id}
+  comments={post.comments as CommentWithComments[]}
+  depth={0}
+  newId={comment.id}
+  hiddenCommentIds={hiddenCommentIds}
+/>
