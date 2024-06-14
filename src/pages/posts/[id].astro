@@ -30,7 +30,9 @@ post.currentUserVote =
     </tbody>
   </table>
 
-  <div>
+  <div
+    x-on:comment-show="hiddenCommentIds = hiddenCommentIds.filter((id) => id !== $event.detail.id)"
+  >
     <form class="mb-3">
       <textarea
         class="block textarea textarea-bordered"

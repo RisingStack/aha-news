@@ -16,23 +16,23 @@ interface Props {
   postId: number;
   comment: CommentWithComments;
   depth: number;
-  hiddenCommentIds: number[];
   newId: number;
   nextCommentId?: number;
   prevCommentId?: number;
   parentCommentId?: number;
   rootCommentId?: number;
+  hiddenCommentIds: number[];
 }
 
 const {
   postId,
   comment,
   newId,
-  hiddenCommentIds,
   prevCommentId,
   nextCommentId,
   parentCommentId,
   depth,
+  hiddenCommentIds,
 } = Astro.props;
 const { user } = Astro.locals;
 
@@ -52,9 +52,25 @@ function getDateString(date: Date) {
 
   return date.toLocaleDateString("en-US", options);
 }
+
+function getChildCommentCount(comment: CommentWithComments) {
+  return (
+    comment.childrenCount +
+    comment.children?.reduce(
+      (acc, child) => acc + getChildCommentCount(child),
+      0
+    )
+  );
+}
+
+const recursiveChildCount = getChildCommentCount(comment);
+const isShown = !hiddenCommentIds?.includes(comment.id);
 ---
 
-<div id={`comment-${comment.id}`}>
+<div
+  id={`comment-${comment.id}`}
+  x-data={`{isShown: ${isShown}, recursiveChildCount: ${recursiveChildCount}}`}
+>
   <table>
     <tbody>
       <td>
@@ -75,6 +91,15 @@ function getDateString(date: Date) {
         <MaybeCommentLink targetId={parentCommentId}>parent</MaybeCommentLink>
         <MaybeCommentLink targetId={prevCommentId}>prev</MaybeCommentLink>
         <MaybeCommentLink targetId={nextCommentId}>next</MaybeCommentLink>
+        <span
+          class="link"
+          x-on:click={`
+            isShown = !isShown; 
+            isShown 
+            ? $dispatch('comment-show', {id: ${comment.id}})
+            : $dispatch('comment-hide', {id: ${comment.id}});
+          `}
+          x-text="isShown ? '[-]' : `${recursiveChildCount + 1} more`"></span>
       </td>
     </tbody>
   </table>

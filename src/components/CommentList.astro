@@ -5,9 +5,9 @@ interface Props {
   postId: number;
   comments: CommentWithComments[];
   depth: number;
-  hiddenCommentIds: number[];
   parentCommentId?: number;
   newId?: number;
+  hiddenCommentIds: number[];
 }
 
 const { postId, comments, depth, hiddenCommentIds, parentCommentId, newId } =
@@ -23,12 +23,12 @@ const { postId, comments, depth, hiddenCommentIds, parentCommentId, newId } =
       <Comment
         postId={postId}
         comment={comment}
-        hiddenCommentIds={hiddenCommentIds}
         prevCommentId={prevCommentId}
         nextCommentId={nextCommentId}
         parentCommentId={parentCommentId}
         depth={depth}
         newId={newId}
+        hiddenCommentIds={hiddenCommentIds}
       />
     );
   })
