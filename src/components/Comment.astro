@@ -79,6 +79,11 @@ const isNew = newId === comment.id;
           $el.scrollIntoView();
           setTimeout(() => isNew = false, 5000) 
         }
+				if(recursiveChildCount) {
+					recursiveChildCount += 1;
+				} else {
+					recursiveChildCount = 0;
+				}
       };
     `}
 >
